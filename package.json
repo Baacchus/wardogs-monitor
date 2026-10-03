@@ -1,0 +1,19 @@
+{
+  "name": "wardogs-monitor",
+  "version": "1.0.0",
+  "description": "Tableau de bord personnel en temps réel des serveurs WARDOGS France",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "wardogs",
+    "servers",
+    "monitoring",
+    "gaming",
+    "dashboard"
+  ],
+  "author": "Zoran",
+  "license": "MIT"
+}
