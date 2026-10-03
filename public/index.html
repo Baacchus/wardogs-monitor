@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WARDOGS FRANCE · Moniteur des Serveurs en Temps Réel</title>
+  <meta name="description" content="Tableau de bord tactique en direct pour surveiller l'ensemble des serveurs de jeu WARDOGS : wardogsfrance.fr, wardogs-france.com et wardogs.7ecompagnie.fr.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,500;0,600;0,700;1,600&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
+</head>
+<body class="hud-body">
+  <!-- Scanline & Atmospheric Tactical Grid Background -->
+  <div class="grid-atmosphere" aria-hidden="true"></div>
+  <div class="glow-orb glow-top-left" aria-hidden="true"></div>
+  <div class="glow-orb glow-bottom-right" aria-hidden="true"></div>
+
+  <!-- Header -->
+  <header class="tactical-header">
+    <div class="container header-content">
+      <div class="branding">
+        <div class="badge-radar">
+          <span class="pulse-dot"></span>
+          <span class="radar-sweep"></span>
+        </div>
+        <div>
+          <div class="brand-tag">TACTICAL SERVER MONITOR · 3 COMMUNAUTÉS</div>
+          <h1 class="brand-title">WARDOGS <span class="text-accent">FRANCE & 7e CIE</span></h1>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Refresh Countdown & Trigger -->
+
+        <!-- Refresh Countdown & Trigger -->
+        <div class="refresh-box" id="refresh-widget">
+          <div class="refresh-countdown">
+            <svg class="countdown-svg" width="36" height="36" viewBox="0 0 36 36">
+              <circle class="countdown-bg" cx="18" cy="18" r="15"></circle>
+              <circle class="countdown-bar" id="countdown-circle" cx="18" cy="18" r="15"></circle>
+            </svg>
+            <span class="countdown-number" id="countdown-text">30</span>
+          </div>
+          <button id="btn-manual-refresh" class="btn-refresh" title="Forcer l'actualisation immédiate">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+            </svg>
+            <span>Actualiser</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="container main-content">
+    
+    <!-- Top Summary HUD Cards -->
+    <section class="metrics-grid" aria-label="Statistiques globales">
+      <div class="metric-card">
+        <div class="metric-icon metric-icon-players">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </div>
+        <div class="metric-info">
+          <span class="metric-label">JOUEURS CONNECTÉS</span>
+          <div class="metric-value-row">
+            <span class="metric-value" id="stat-total-players">0</span>
+            <span class="metric-sub" id="stat-max-players">/ 0 slots</span>
+          </div>
+          <div class="hud-progress-bar">
+            <div class="hud-progress-fill" id="stat-fill-players" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon metric-icon-servers">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+            <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+            <line x1="6" y1="6" x2="6.01" y2="6"></line>
+            <line x1="6" y1="18" x2="6.01" y2="18"></line>
+          </svg>
+        </div>
+        <div class="metric-info">
+          <span class="metric-label">SERVEURS ACTIFS</span>
+          <div class="metric-value-row">
+            <span class="metric-value text-online" id="stat-online-servers">0</span>
+            <span class="metric-sub" id="stat-total-servers">/ 0 total</span>
+          </div>
+          <div class="metric-detail" id="stat-sources-breakdown">
+            <span>Chargement des sources...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon metric-icon-factions">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+        </div>
+        <div class="metric-info">
+          <span class="metric-label">SCORES DES FACTIONS</span>
+          <div class="factions-mini-bar">
+            <span class="f-pill f-valk" id="faction-pill-valk" title="Valkyra">VAL 0</span>
+            <span class="f-pill f-mant" id="faction-pill-mant" title="Manticore">MAN 0</span>
+            <span class="f-pill f-lone" id="faction-pill-lone" title="Lonestar">LON 0</span>
+          </div>
+          <div class="metric-detail" id="factions-summary-text">
+            Points cumulés sur les serveurs 3-factions
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon metric-icon-sync">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+        </div>
+        <div class="metric-info">
+          <span class="metric-label">DERNIÈRE SYNCHRO</span>
+          <div class="metric-value-row">
+            <span class="metric-value-sm" id="stat-last-sync">--:--:--</span>
+          </div>
+          <div class="metric-detail flex-sync-status">
+            <span class="status-indicator-dot online"></span>
+            <span id="stat-sync-state">3 sources connectées</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Controls Bar (Filters, Tabs, Search) -->
+    <section class="controls-toolbar" aria-label="Filtres et contrôles">
+      <div class="tabs-group">
+        <button class="tab-btn active" data-filter="all" id="tab-all">
+          Tous les serveurs <span class="tab-count" id="count-all">17</span>
+        </button>
+        <button class="tab-btn" data-filter="7e" id="tab-7e">
+          7ecompagnie.fr <span class="tab-count" id="count-7e">6</span>
+        </button>
+        <button class="tab-btn" data-filter="fr" id="tab-fr">
+          wardogsfrance.fr <span class="tab-count" id="count-fr">4</span>
+        </button>
+        <button class="tab-btn" data-filter="com" id="tab-com">
+          wardogs-france.com <span class="tab-count" id="count-com">7</span>
+        </button>
+      </div>
+
+      <div class="search-sort-group">
+        <div class="search-wrapper">
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="search-input" placeholder="Rechercher par carte, nom, mode..." aria-label="Rechercher des serveurs">
+          <button id="search-clear" class="btn-clear hidden" title="Effacer la recherche">✕</button>
+        </div>
+
+        <div class="sort-wrapper">
+          <label for="sort-select" class="sr-only">Trier par</label>
+          <select id="sort-select" aria-label="Trier par">
+            <option value="players-desc">Joueurs (Décroissant)</option>
+            <option value="players-asc">Joueurs (Croissant)</option>
+            <option value="name-asc">Nom (A → Z)</option>
+            <option value="source">Par communauté</option>
+          </select>
+        </div>
+
+        <div class="filter-toggle-wrapper">
+          <label class="toggle-checkbox" title="N'afficher que les serveurs avec au moins 1 joueur">
+            <input type="checkbox" id="filter-active-only">
+            <span class="toggle-switch"></span>
+            <span class="toggle-label">Actifs</span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- Servers Grid -->
+    <section id="servers-section">
+      <div id="servers-grid" class="servers-grid">
+        <!-- Server cards will be injected dynamically -->
+        <div class="loading-state">
+          <div class="radar-spinner"></div>
+          <p>Initialisation du radar et scan des serveurs WARDOGS...</p>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div id="empty-state" class="empty-state hidden">
+        <div class="empty-icon">📡</div>
+        <h3>Aucun serveur ne correspond aux critères</h3>
+        <p>Modifiez votre recherche ou réinitialisez les filtres.</p>
+        <button id="btn-reset-filters" class="btn-action">Réinitialiser les filtres</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="tactical-footer">
+    <div class="container footer-content">
+      <div class="footer-left">
+        <p><strong>WARDOGS Monitor</strong> · Données synchronisées avec <a href="https://wardogs.7ecompagnie.fr" target="_blank" rel="noopener">wardogs.7ecompagnie.fr</a>, <a href="https://wardogsfrance.fr/serveurs" target="_blank" rel="noopener">wardogsfrance.fr</a> et <a href="https://www.wardogs-france.com/serveurs" target="_blank" rel="noopener">wardogs-france.com</a>.</p>
+        <p class="disclaimer">Tableau de bord personnel et indépendant. Le jeu WARDOGS est la propriété de ses développeurs et éditeurs respectifs.</p>
+      </div>
+      <div class="footer-right">
+        <span class="badge-live-pulse"><span class="dot"></span> RADAR ACTIF</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Notification Container -->
+  <div id="toast" class="tactical-toast hidden" role="alert" aria-live="polite">
+    <div class="toast-icon">✓</div>
+    <div class="toast-body">
+      <div class="toast-title" id="toast-title">Code copié !</div>
+      <div class="toast-message" id="toast-message">Identifiant serveur prêt à coller en jeu.</div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
