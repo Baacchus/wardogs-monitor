@@ -26,9 +26,11 @@ async function fetchWardogs7e(timeoutMs = 6000) {
     const rawServers = Array.isArray(data.servers) ? data.servers : [];
 
     return rawServers.map((s, idx) => {
-      // Extraire les scores des factions
+      const players = typeof s.playerCount === 'number' ? s.playerCount : 0;
+
+      // Extraire les scores des factions (remis à 0 si le serveur est vide)
       const factions = { valkyra: 0, manticore: 0, lonestar: 0 };
-      if (Array.isArray(s.scores)) {
+      if (players > 0 && Array.isArray(s.scores)) {
         for (const sc of s.scores) {
           const name = (sc.name || '').toLowerCase();
           if (name.includes('valkyra')) factions.valkyra = sc.score || 0;
