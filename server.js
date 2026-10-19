@@ -1,9 +1,14 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const dns = require('dns');
 const { fetchWardogsFr } = require('./services/wardogsFr');
 const { fetchWardogsCom } = require('./services/wardogsCom');
 const { fetchWardogs7e } = require('./services/wardogs7e');
+
+try {
+  dns.setDefaultResultOrder('ipv4first');
+} catch (_) {}
 
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(__dirname, 'public');
