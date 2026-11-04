@@ -13,14 +13,15 @@ jobs:
       - name: Récupérer le code
         uses: actions/checkout@v4
 
-      - name: Synchroniser les fichiers via FTPS
+      - name: Synchroniser les fichiers via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: ${{ secrets.SERVER_DIR }}
-          protocol: ftps
+          protocol: ftp
+          port: 21
           exclude: |
             **/.git*
             **/.git*/**
