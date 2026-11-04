@@ -1,0 +1,4 @@
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/nona8357/repositories/wardogs/
+    - cd $DEPLOYPATH && /bin/touch tmp/restart.txt
