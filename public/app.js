@@ -219,6 +219,20 @@
       occupancyText = 'Partie en cours';
     }
 
+    // Génération des 10 segments LED pour la jauge tactique
+    const totalSegments = 10;
+    const activeSegmentsCount = Math.min(totalSegments, Math.round((s.players / (s.maxPlayers || 100)) * totalSegments));
+    let segColorClass = 'active-full';
+    if (s.players >= 95) segColorClass = 'active-critical';
+    else if (s.players < 30 && s.players > 0) segColorClass = 'active-low';
+    else if (s.players >= 30 && s.players < 75) segColorClass = 'active-medium';
+
+    let segmentsHTML = '';
+    for (let i = 0; i < totalSegments; i++) {
+      const isActive = i < activeSegmentsCount;
+      segmentsHTML += `<div class="occupancy-segment ${isActive ? segColorClass : ''}"></div>`;
+    }
+
     // Factions HTML pour serveurs Classiques & 7e Compagnie
     let factionsHTML = '';
     if (s.factions) {
@@ -234,21 +248,21 @@
       factionsHTML = `
         <div class="card-factions" title="Scores et progression des 3 factions">
           <div class="faction-row">
-            <span class="faction-name valkyra">Valkyra</span>
+            <span class="faction-name valkyra">VALKYRA</span>
             <div class="faction-bar-track">
               <div class="faction-bar-fill valkyra" style="width: ${valkPct}%"></div>
             </div>
             <span class="faction-count">${valk}</span>
           </div>
           <div class="faction-row">
-            <span class="faction-name manticore">Manticore</span>
+            <span class="faction-name manticore">MANTICORE</span>
             <div class="faction-bar-track">
               <div class="faction-bar-fill manticore" style="width: ${mantPct}%"></div>
             </div>
             <span class="faction-count">${mant}</span>
           </div>
           <div class="faction-row">
-            <span class="faction-name lonestar">Lonestar</span>
+            <span class="faction-name lonestar">LONESTAR</span>
             <div class="faction-bar-track">
               <div class="faction-bar-fill lonestar" style="width: ${lonePct}%"></div>
             </div>
@@ -274,7 +288,7 @@
           </div>
           <div class="card-status-badge ${s.online ? 'online' : 'offline'}">
             <span class="status-dot-pulse"></span>
-            <span>${s.online ? 'En ligne' : 'Hors ligne'}</span>
+            <span>${s.online ? 'EN LIGNE' : 'HORS LIGNE'}</span>
           </div>
         </div>
 
@@ -283,12 +297,12 @@
           <div class="occupancy-header">
             <div class="occupancy-numbers">
               <span class="occupancy-current">${s.players}</span>
-              <span class="occupancy-max">/ ${s.maxPlayers} joueurs</span>
+              <span class="occupancy-max">/ ${s.maxPlayers} SLOTS (${pct}%)</span>
             </div>
             <span class="occupancy-status-text ${occupancyClass}">${occupancyText}</span>
           </div>
-          <div class="occupancy-gauge">
-            <div class="occupancy-fill ${occupancyClass}" style="width: ${Math.max(2, pct)}%"></div>
+          <div class="occupancy-segments" title="Occupation: ${s.players}/${s.maxPlayers}">
+            ${segmentsHTML}
           </div>
         </div>
 
@@ -301,7 +315,7 @@
               <line x1="16" y1="6" x2="16" y2="22"></line>
             </svg>
             <div class="meta-info">
-              <span class="meta-label">Carte en cours</span>
+              <span class="meta-label">Théâtre actuel</span>
               <span class="meta-value" title="${escapeHTML(s.currentMap)}">${escapeHTML(s.currentMap)}</span>
             </div>
           </div>
@@ -313,7 +327,7 @@
               <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
             </svg>
             <div class="meta-info">
-              <span class="meta-label">${s.nextMap ? 'Carte suivante' : 'Mode de jeu'}</span>
+              <span class="meta-label">${s.nextMap ? 'Théâtre suivant' : 'Engagement'}</span>
               <span class="meta-value" title="${escapeHTML(s.nextMap || s.gameMode)}">${escapeHTML(s.nextMap || s.gameMode)}</span>
             </div>
           </div>
@@ -328,7 +342,7 @@
               <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
               <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
             </svg>
-            <span>Copier le Server ID</span>
+            <span>[ COPIER SERVER ID ]</span>
           </button>
 
           ${s.statsUrl ? `
