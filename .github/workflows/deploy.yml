@@ -1,0 +1,24 @@
+name: Deploy to o2switch
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Déploiement via SSH sur o2switch
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd /home/nona8357/repositories/wardogs
+            git pull origin main
+            mkdir -p tmp
+            touch tmp/restart.txt
