@@ -1,4 +1,4 @@
-name: Deploy to o2switch
+name: Deploy via FTPS to o2switch
 
 on:
   push:
@@ -6,19 +6,22 @@ on:
       - main
 
 jobs:
-  deploy:
+  web-deploy:
+    name: Sync Files via FTPS
     runs-on: ubuntu-latest
-
     steps:
-      - name: Déploiement via SSH sur o2switch
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Synchroniser les fichiers via FTPS
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          script: |
-            cd /home/nona8357/repositories/wardogs
-            git pull origin main
-            mkdir -p tmp
-            touch tmp/restart.txt
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ${{ secrets.SERVER_DIR }}
+          protocol: ftps
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
